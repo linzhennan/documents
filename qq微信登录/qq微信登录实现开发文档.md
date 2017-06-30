@@ -1,37 +1,41 @@
 qq 微信快速登录开发文档
 ======
 ### 目录
-[一. 微信](#1 )
-  - [1.1 微信登录实现过程流程图](#1 )
-  - [1.2 具体实现过程](#1.2 )
-  - [1.2.1 生成二维码](#1.2.1 )
-  - [1.2.2 获取access_token](#1.2.2 )
-  - [1.2.3 获取unionId等用户数据](#1.2.3 )
-  - [1.2.4 服务器根据unionId进行相关操作](#1.2.4 )
 
-[二. qq](#2 )
-- [2.1 生成登录页面](#2.1 )
-- [2.2 通过code获取token](#2.2 )
-- [2.3 根据accessToken获取用户信息](#2.3 )
-- [2.4 根据获取到的openid进行相关操作](#2.4 )
+<!-- toc orderedList:0 depthFrom:1 depthTo:6 -->
+
+* [qq 微信快速登录开发文档](#qq-微信快速登录开发文档)
+    * [目录](#目录)
+    * [一.微信](#一微信)
+      * [1.微信登录实现过程流程图](#1微信登录实现过程流程图)
+      * [2. 具体实现过程](#2-具体实现过程)
+        * [1. 生成二维码](#1-生成二维码)
+        * [2. 获取access_token](#2-获取access_token)
+        * [3. 获取unionId等用户数据](#3-获取unionid等用户数据)
+        * [4. 服务器根据unionId进行相关操作](#4-服务器根据unionid进行相关操作)
+    * [二.qq](#二qq)
+      * [1. 生成登录页面](#1-生成登录页面)
+      * [2. 通过code获取token](#2-通过code获取token)
+      * [3. 根据accessToken获取用户信息](#3-根据accesstoken获取用户信息)
+      * [4. 根据获取到的openid进行相关操作](#4-根据获取到的openid进行相关操作)
+
+<!-- tocstop -->
+
 
 -------
 
-<span id="1"></span>
 ### 一.微信
-<span id="1.1"></span>
 #### 1.微信登录实现过程流程图
 ![](assets/149f5a05fcbe28db7491c315d791833dd89a9c4dd84560656c136dcc77bb23d53ecca999a364d9275e10c0a7baa4811e0317820cc20ed368b167d8521d3cc484940.png?0.494842503676451)  
 具体流程见[网站应用微信登录开发指南](https://open.weixin.qq.com/cgi-bin/showdocument?action=dir_list&t=resource/res_list&verify=1&id=open1419316505&token=9b2933f7ee2d51c465f310a1d41661d14dfc62d9&lang=zh_CN )
 <span id="1.2"></span>
 #### 2. 具体实现过程
-<span id="1.2.1"></span>
-  1. 生成二维码
+  ##### 1. 生成二维码
 ![](https://res.wx.qq.com/open/zh_CN/htmledition/res/img/pic/web-wxlogin/12168b9.png )
 二维码生成地址为https://open.weixin.qq.com/connect/qrconnect?appid=APPID&redirect_uri=REDIRECT_URI&response_type=code&scope=SCOPE&state=STATE#wechat_redirect
- 替换相应的变量,其中redirect_uri为回调地址,即扫描二维码后跳转到的地址,需与***微信开放平台***配置的回调地址相同,本地测试时可配置为本地地址(_如localhost_)具体见官方文档
+ 替换相应的变量,其中redirect_uri为回调地址,即扫描二维码后跳转到的地址,需与***微信开放平台***配置的回调域相匹配,本地测试时可配置为本地地址(_如localhost_)具体见官方文档
  <span id="1.2.2"></span>
-  2. 获取access_token
+  ##### 2. 获取access_token
 
 服务器获取code后通过get请求https://api.weixin.qq.com/sns/oauth2/access_token?appid=APPID&secret=SECRET&code=CODE&grant_type=authorization_code
 服务器返回数据如下格式:
@@ -58,7 +62,7 @@ qq 微信快速登录开发文档
 
 ```
 <span id="1.2.3"></span>
-  3. 获取unionId等用户数据
+  ##### 3. 获取unionId等用户数据
   GET请求  https://api.weixin.qq.com/sns/oauth2/access_token?appid=APPID&secret=SECRET&code=CODE&grant_type=authorization_code
   实现代码如下:
 
@@ -86,19 +90,19 @@ qq 微信快速登录开发文档
 }
 ```
 <span id="1.2.4"></span>
-  4. 服务器根据unionId进行相关操作
+  ##### 4. 服务器根据unionId进行相关操作
 ### 二.qq
+
+#### 1. 生成登录页面
 [qq互联管理地址](https://connect.qq.com/ )
 [qq互联开发文档](http://wiki.connect.qq.com/%E7%BD%91%E7%AB%99%E5%BA%94%E7%94%A8%E6%8E%A5%E5%85%A5%E6%B5%81%E7%A8%8B )
 
 qq登录流程与微信登录流程类似,见[微信登录实现流程图](#wx )
-<span id="2.1"></span>
-1. 生成登录页面
   https://graph.qq.com/oauth2.0/authorize +参数
   redirect_uri为回调地址,与微信类似
   登录成功后会跳转到redirect_uri?code=9A5F************************06AF&state=test
   <span id="2.2"></span>
-2. 通过code获取token
+#### 2. 通过code获取token
   根据返回的code请求https://graph.qq.com/oauth2.0/token
   返回格式如下:
 ```
@@ -121,7 +125,7 @@ access_token获取和解析代码如下:
        }
 ```
 <span id="2.3"></span>
-3. 根据accessToken获取用户信息
+#### 3. 根据accessToken获取用户信息
 
 请求https://graph.qq.com/oauth2.0/me
 返回数据格式:
@@ -142,4 +146,4 @@ String getUserInfoUrl = "https://graph.qq.com/oauth2.0/me?access_token="+accessT
         return qqUserInfoBean;
 ```
 <span id="2.4"></span>
-4. 根据获取到的openid进行相关操作
+#### 4. 根据获取到的openid进行相关操作
